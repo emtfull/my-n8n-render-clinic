@@ -2,8 +2,9 @@ services:
   - type: web
     name: n8n
     plan: free
-    image: docker.io/n8nio/n8n:latest
+    dockerImage: docker.io/n8nio/n8n:latest
     envVars:
+      - fromGroup: n8n-secrets
       - key: NODE_ENV
         value: "production"
       - key: N8N_HOST
@@ -12,30 +13,19 @@ services:
         value: "5678"
       - key: WEBHOOK_URL
         fromEnvVar: WEBHOOK_URL
-      - key: N8N_LOG_LEVEL
-        value: "info"
-      - fromGroup: n8n-secrets
-
-      # Database (non-secret)
       - key: DB_TYPE
         value: "postgresdb"
       - key: DB_POSTGRESDB_SCHEMA
         value: "public"
       - key: DB_POSTGRESDB_SSL_REJECT_UNAUTHORIZED
         value: "false"
-
-      # UI Cleanup
       - key: N8N_DISABLE_PRODUCTION_MAIN_MENU
         value: "true"
       - key: N8N_HIDE_UI_FOOTER
         value: "true"
-
-      # Security
       - key: N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS
         value: "true"
       - key: N8N_AUTH_EXCLUDE_ENDPOINTS
         value: "setup"
-
-      # Runners
       - key: N8N_RUNNERS_ENABLED
         value: "true"

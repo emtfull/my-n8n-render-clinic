@@ -14,20 +14,11 @@ services:
         value: "5678"
       - key: N8N_LOG_LEVEL
         value: "info"
+      - fromGroup: n8n-secrets
 
-      # Admin Auth
-      - key: N8N_BASIC_AUTH_ACTIVE
-        value: "true"
-      - key: N8N_BASIC_AUTH_USER
-        value: "emtfull"
-      - key: N8N_BASIC_AUTH_PASSWORD
-        fromEnvVar: N8N_BASIC_AUTH_PASSWORD
-
-      # Database
+      # Database (non-secret)
       - key: DB_TYPE
         value: "postgresdb"
-      - key: DB_POSTGRESDB_CONNECTION_URL
-        fromEnvVar: DB_POSTGRESDB_CONNECTION_URL
       - key: DB_POSTGRESDB_SCHEMA
         value: "public"
       - key: DB_POSTGRESDB_SSL_REJECT_UNAUTHORIZED

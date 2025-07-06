@@ -10,6 +10,7 @@ services:
         value: "production"
       - key: N8N_HOST
         value: "0.0.0.0"
+      - fromGroup: n8n-secrets
       - key: N8N_PORT
         value: "5678"
       - key: N8N_LOG_LEVEL

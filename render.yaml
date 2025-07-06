@@ -1,10 +1,8 @@
 services:
   - type: web
     name: n8n
-    env: node
     plan: free
-    buildCommand: ""
-    startCommand: n8n start
+    image: docker.io/n8nio/n8n:latest
     envVars:
       - key: NODE_ENV
         value: "production"
@@ -12,6 +10,8 @@ services:
         value: "0.0.0.0"
       - key: N8N_PORT
         value: "5678"
+      - key: WEBHOOK_URL
+        fromEnvVar: WEBHOOK_URL
       - key: N8N_LOG_LEVEL
         value: "info"
       - fromGroup: n8n-secrets

@@ -2,7 +2,7 @@ services:
   - type: web
     name: n8n
     plan: free
-    image: n8nio/n8n:latest  # ✅ Correct key
+    dockerImage: n8nio/n8n:latest  # ✅ Correct key
     envVars:
       - fromGroup: n8n-secrets  # ✅ Includes WEBHOOK_URL already
       - key: NODE_ENV

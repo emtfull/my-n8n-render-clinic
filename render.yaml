@@ -1,0 +1,50 @@
+services:
+  - type: web
+    name: n8n
+    env: node
+    plan: free
+    buildCommand: ""
+    startCommand: n8n start
+    envVars:
+      - key: NODE_ENV
+        value: "production"
+      - key: N8N_HOST
+        value: "0.0.0.0"
+      - key: N8N_PORT
+        value: "5678"
+      - key: N8N_LOG_LEVEL
+        value: "info"
+
+      # Admin Auth
+      - key: N8N_BASIC_AUTH_ACTIVE
+        value: "true"
+      - key: N8N_BASIC_AUTH_USER
+        value: "emtfull"
+      - key: N8N_BASIC_AUTH_PASSWORD
+        fromEnvVar: N8N_BASIC_AUTH_PASSWORD
+
+      # Database
+      - key: DB_TYPE
+        value: "postgresdb"
+      - key: DB_POSTGRESDB_CONNECTION_URL
+        fromEnvVar: DB_POSTGRESDB_CONNECTION_URL
+      - key: DB_POSTGRESDB_SCHEMA
+        value: "public"
+      - key: DB_POSTGRESDB_SSL_REJECT_UNAUTHORIZED
+        value: "false"
+
+      # UI Cleanup
+      - key: N8N_DISABLE_PRODUCTION_MAIN_MENU
+        value: "true"
+      - key: N8N_HIDE_UI_FOOTER
+        value: "true"
+
+      # Security
+      - key: N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS
+        value: "true"
+      - key: N8N_AUTH_EXCLUDE_ENDPOINTS
+        value: "setup"
+
+      # Runners
+      - key: N8N_RUNNERS_ENABLED
+        value: "true"

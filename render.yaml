@@ -1,29 +1,44 @@
+version: '3.8'
+
+volumes:
+  db_storage:
+  n8n_storage:
+
 services:
-  - type: web
-    name: n8n
-    plan: free
-    dockerImage: n8nio/n8n:latest  # ✅ Correct key
-    envVars:
-      - fromGroup: n8n-secrets  # ✅ Includes WEBHOOK_URL already
-      - key: NODE_ENV
-        value: "production"
-      - key: N8N_HOST
-        value: "0.0.0.0"
-      - key: N8N_PORT
-        value: "5678"
-      - key: DB_TYPE
-        value: "postgresdb"
-      - key: DB_POSTGRESDB_SCHEMA
-        value: "public"
-      - key: DB_POSTGRESDB_SSL_REJECT_UNAUTHORIZED
-        value: "false"
-      - key: N8N_DISABLE_PRODUCTION_MAIN_MENU
-        value: "true"
-      - key: N8N_HIDE_UI_FOOTER
-        value: "true"
-      - key: N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS
-        value: "true"
-      - key: N8N_AUTH_EXCLUDE_ENDPOINTS
-        value: "setup"
-      - key: N8N_RUNNERS_ENABLED
-        value: "true"
+  postgres:
+    image: postgres:16
+    restart: always
+    environment:
+      - POSTGRES_USER
+      - POSTGRES_PASSWORD
+      - POSTGRES_DB
+      - POSTGRES_NON_ROOT_USER
+      - POSTGRES_NON_ROOT_PASSWORD
+    volumes:
+      - db_storage:/var/lib/postgresql/data
+      - ./init-data.sh:/docker-entrypoint-initdb.d/init-data.sh
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -h localhost -U ${POSTGRES_USER} -d ${POSTGRES_DB}']
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  n8n:
+    image: docker.n8n.io/n8nio/n8n
+    restart: always
+    environment:
+      - DB_TYPE=postgresdb
+      - DB_POSTGRESDB_HOST=postgres
+      - DB_POSTGRESDB_PORT=5432
+      - DB_POSTGRESDB_DATABASE=${POSTGRES_DB}
+      - DB_POSTGRESDB_USER=${POSTGRES_NON_ROOT_USER}
+      - DB_POSTGRESDB_PASSWORD=${POSTGRES_NON_ROOT_PASSWORD}
+    ports:
+      - 5678:5678
+    links:
+      - postgres
+    volumes:
+      - n8n_storage:/home/node/.n8n
+    depends_on:
+      postgres:
+        condition: service_healthy
